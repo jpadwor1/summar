@@ -12,9 +12,9 @@ import { ArrowRight, Check, HelpCircle, Minus } from 'lucide-react';
 import Link from 'next/link';
 import { buttonVariants } from '@/components/ui/button';
 import UpgradeButton from '@/components/UpgradeButton';
-const Page = () => {
+const Page = async () => {
   const { getUser } = getKindeServerSession();
-  const user = getUser();
+  const user = await getUser();
   const userId = user?.id;
   const pricingItems = [
     {
