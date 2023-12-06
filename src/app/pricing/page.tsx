@@ -15,6 +15,7 @@ import UpgradeButton from '@/components/UpgradeButton';
 const Page = () => {
   const { getUser } = getKindeServerSession();
   const user = getUser();
+  const userId = user?.id;
   const pricingItems = [
     {
       plan: 'Free',
@@ -172,16 +173,16 @@ const Page = () => {
                   <div className='p-5'>
                     {plan === 'Free' ? (
                       <Link
-                        href={user ? '/dashboard' : '/sign-in'}
+                        href={userId ? '/dashboard' : '/sign-in'}
                         className={buttonVariants({
                           className: 'w-full',
                           variant: 'secondary',
                         })}
                       >
-                        {user ? 'Upgrade Now' : 'Sign up'}
+                        {userId ? 'Upgrade Now' : 'Sign up'}
                         <ArrowRight className='ml-1.5 h-5 w-5' />
                       </Link>
-                    ) : user ? (
+                    ) : userId ? (
                       <UpgradeButton />
                     ) : (
                       <Link
@@ -190,7 +191,7 @@ const Page = () => {
                           className: 'w-full',
                         })}
                       >
-                        {user ? 'Upgrade Now' : 'Sign up'}
+                        {userId ? 'Upgrade Now' : 'Sign up'}
                         <ArrowRight className='ml-1.5 h-5 w-5' />
                       </Link>
                     )}
