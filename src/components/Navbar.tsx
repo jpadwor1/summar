@@ -1,10 +1,7 @@
 import Link from 'next/link';
 import MaxWidthWrapper from './MaxWidthWrapper';
 import { buttonVariants } from './ui/button';
-import {
-  LoginLink,
-  RegisterLink,
-} from '@kinde-oss/kinde-auth-nextjs/server';
+import { LoginLink, RegisterLink } from '@kinde-oss/kinde-auth-nextjs/server';
 import { ArrowRight } from 'lucide-react';
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import UserAccountNav from './UserAccountNav';
@@ -14,8 +11,8 @@ import { getUserSubscriptionPlan } from '@/lib/stripe';
 const Navbar = async () => {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
- 
-  const isSubscribed = await getUserSubscriptionPlan()
+
+  const isSubscribed = await getUserSubscriptionPlan();
   return (
     <nav className='sticky h-14 inset-x-0 top-0 z-30 w-flow border-b border-gray-200 bg-white/75 backdrop-blur-lg transtion-all'>
       <MaxWidthWrapper>
