@@ -1,14 +1,19 @@
-"use client";
-import { useState } from "react";
-import UploadButton from "@/components/UploadButton";
-import { trpc } from "@/app/_trpc/client";
-import { Ghost, Plus, MessageSquare, Trash, Loader2 } from "lucide-react";
-import Skeleton from "react-loading-skeleton";
-import Link from "next/link";
-import { format } from "date-fns";
-import { Button } from "./ui/button";
+'use client';
+import { useState } from 'react';
+import UploadButton from '@/components/UploadButton';
+import { trpc } from '@/app/_trpc/client';
+import { Ghost, Plus, MessageSquare, Trash, Loader2 } from 'lucide-react';
+import Skeleton from 'react-loading-skeleton';
+import Link from 'next/link';
+import { format } from 'date-fns';
+import { Button } from './ui/button';
+import { getUserSubscriptionPlan } from '@/lib/stripe';
 
-const Dashboard = () => {
+interface DashboardPageProps {
+  subscriptionPlan: Awaited<ReturnType<typeof getUserSubscriptionPlan>>;
+}
+
+const Dashboard = ({ subscriptionPlan }: DashboardPageProps) => {
   const [currentlyDeletingFile, setCurrentlyDeletingFile] = useState<
     string | null
   >(null);
@@ -31,7 +36,7 @@ const Dashboard = () => {
       <div className='mt-8 flex flex-col items-center justify-between gap-4 border-b border-gray-200  pb-5 sm:flex-row sm:gap-0 sm:items-start '>
         <h1 className='mb-3 font-bold text-5xl text-gray-900'>My Files</h1>
 
-        <UploadButton />
+        <UploadButton isSubscribed={subscriptionPlan.isSubscribed} />
       </div>
 
       {files && files?.length !== 0 ? (
@@ -66,7 +71,7 @@ const Dashboard = () => {
                 <div className='px-6 mt-4 grid grid-cols-3 place-items-center py-2 gap-6 text-xs text-zinc-500'>
                   <div className='flex items-center gap-2'>
                     <Plus className='h-4 w-4' />
-                    {format(new Date(file.createdAt), "MMM yyyy")}
+                    {format(new Date(file.createdAt), 'MMM yyyy')}
                   </div>
 
                   <div className='flex items-center gap-2'>

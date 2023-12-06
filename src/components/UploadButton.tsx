@@ -1,23 +1,25 @@
-"use client";
-import { useState } from "react";
-import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./ui/dialog";
-import { Button } from "./ui/button";
-import { Progress } from "./ui/progress";
-import Dropzone from "react-dropzone";
-import { Cloud, File, Loader2 } from "lucide-react";
-import { start } from "repl";
-import { clear } from "console";
-import { resolve } from "path";
-import { useUploadThing } from "@/lib/useUploadThing";
-import { useToast } from "./ui/use-toast";
-import { useRouter } from "next/navigation";
-import { trpc } from "@/app/_trpc/client";
+'use client';
+import { useState } from 'react';
+import { Dialog, DialogClose, DialogContent, DialogTrigger } from './ui/dialog';
+import { Button } from './ui/button';
+import { Progress } from './ui/progress';
+import Dropzone from 'react-dropzone';
+import { Cloud, File, Loader2 } from 'lucide-react';
+import { start } from 'repl';
+import { clear } from 'console';
+import { resolve } from 'path';
+import { useUploadThing } from '@/lib/useUploadThing';
+import { useToast } from './ui/use-toast';
+import { useRouter } from 'next/navigation';
+import { trpc } from '@/app/_trpc/client';
 
-const UploadDropzone = () => {
+const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
   const router = useRouter();
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
-  const { startUpload } = useUploadThing("pdfUploader");
+  const { startUpload } = useUploadThing(
+    isSubscribed ? 'proPlanUploader' : 'freePlanUploader'
+  );
   const { toast } = useToast();
   const { mutate: startPolling } = trpc.getFile.useMutation({
     onSuccess: (file) => {
@@ -53,9 +55,9 @@ const UploadDropzone = () => {
 
         if (!res) {
           return toast({
-            title: "Something went wrong",
-            description: "Please try again later",
-            variant: "destructive",
+            title: 'Something went wrong',
+            description: 'Please try again later',
+            variant: 'destructive',
           });
         }
 
@@ -65,9 +67,9 @@ const UploadDropzone = () => {
 
         if (!key) {
           return toast({
-            title: "Something went wrong",
-            description: "Please try again later",
-            variant: "destructive",
+            title: 'Something went wrong',
+            description: 'Please try again later',
+            variant: 'destructive',
           });
         }
 
@@ -93,7 +95,9 @@ const UploadDropzone = () => {
                   <span className='font-semibold'>Click to Upload </span>
                   or drag and drop
                 </p>
-                <p className='text-xs text-zinc-500'>PDF (up to 4MB)</p>
+                <p className='text-xs text-zinc-500'>
+                  PDF (up to {isSubscribed ? '16' : '4MB'})
+                </p>
               </div>
 
               {acceptedFiles && acceptedFiles[0] ? (
@@ -136,7 +140,7 @@ const UploadDropzone = () => {
   );
 };
 
-const UploadButton = () => {
+const UploadButton = ({ isSubscribed }: { isSubscribed: boolean }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
@@ -156,7 +160,7 @@ const UploadButton = () => {
       </DialogTrigger>
 
       <DialogContent>
-        <UploadDropzone />
+        <UploadDropzone isSubscribed={isSubscribed} />
       </DialogContent>
     </Dialog>
   );

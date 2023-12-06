@@ -4,25 +4,28 @@ import { buttonVariants } from './ui/button';
 import {
   LoginLink,
   RegisterLink,
-  LogoutLink,
 } from '@kinde-oss/kinde-auth-nextjs/server';
 import { ArrowRight } from 'lucide-react';
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import UserAccountNav from './UserAccountNav';
+import MobileNav from './MobileNav';
+import { getUserSubscriptionPlan } from '@/lib/stripe';
 
 const Navbar = async () => {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
-
+ 
+  const isSubscribed = await getUserSubscriptionPlan()
   return (
     <nav className='sticky h-14 inset-x-0 top-0 z-30 w-flow border-b border-gray-200 bg-white/75 backdrop-blur-lg transtion-all'>
       <MaxWidthWrapper>
         <div className='flex h-14 items-center justify-between border-b border-zinc-200'>
           <Link href='/' className='flex z-40 font-semibold'>
-            <span className='text-2xl text-zinc-700'>Summan.</span>
+            <span className='text-2xl text-zinc-700'>Summar.</span>
           </Link>
 
-          {/* TODO: add mobile navbar */}
+          <MobileNav isAuth={!!user} isSubscribed={isSubscribed} />
+
           <div className='hidden items-center space-x-4 sm:flex'>
             {!user ? (
               <>
@@ -46,7 +49,7 @@ const Navbar = async () => {
             ) : (
               <>
                 <Link
-                  href='/Dashboard'
+                  href='/dashboard'
                   className={buttonVariants({ variant: 'ghost', size: 'sm' })}
                 >
                   Dashboard
