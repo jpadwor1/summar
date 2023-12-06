@@ -12,10 +12,12 @@ import { ArrowRight, Check, HelpCircle, Minus } from 'lucide-react';
 import Link from 'next/link';
 import { buttonVariants } from '@/components/ui/button';
 import UpgradeButton from '@/components/UpgradeButton';
+import { getUserSubscriptionPlan } from '@/lib/stripe';
 const Page = async () => {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
   const userId = user?.id;
+  const subscriptionPlan = await getUserSubscriptionPlan();
   const pricingItems = [
     {
       plan: 'Free',
@@ -173,16 +175,16 @@ const Page = async () => {
                   <div className='p-5'>
                     {plan === 'Free' ? (
                       <Link
-                        href={userId ? '/dashboard' : '/sign-in'}
+                        href={userId ? '/dashboard' : '/api/auth/register?'}
                         className={buttonVariants({
                           className: 'w-full',
                           variant: 'secondary',
                         })}
                       >
-                        {userId ? 'Upgrade Now' : 'Sign up'}
+                        {userId ? 'Try it out' : 'Sign up'}
                         <ArrowRight className='ml-1.5 h-5 w-5' />
                       </Link>
-                    ) : userId ? (
+                    ) : !subscriptionPlan.isSubscribed ? (
                       <UpgradeButton />
                     ) : (
                       <Link
@@ -191,7 +193,7 @@ const Page = async () => {
                           className: 'w-full',
                         })}
                       >
-                        {userId ? 'Upgrade Now' : 'Sign up'}
+                        {userId ? 'Upgrade Now' : 'Sign in'}
                         <ArrowRight className='ml-1.5 h-5 w-5' />
                       </Link>
                     )}
