@@ -64,10 +64,12 @@ const BillingForm = ({ subscriptionPlan }: BillingFormProps) => {
             </Button>
 
             {subscriptionPlan.isSubscribed ? (
-                <p className='rounded-full text-xs font-medium'>
-                    {subscriptionPlan.isCanceled ? 'Your plan will expire on ' : 'Your plan will renew on '}
-                    {format(subscriptionPlan.stripeCurrentPeriodEnd!, 'dd.MM.yyyy')}
-                </p>
+              <p className='rounded-full text-xs font-medium'>
+                {subscriptionPlan.isCanceled
+                  ? 'Your plan will expire on '
+                  : 'Your plan will renew on '}
+                {format(subscriptionPlan.stripeCurrentPeriodEnd!, 'MM.dd.yyyy')}
+              </p>
             ) : null}
           </CardFooter>
         </Card>

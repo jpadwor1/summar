@@ -21,7 +21,7 @@ const Page = async () => {
   const pricingItems = [
     {
       plan: 'Free',
-      tagline: 'For small side projects.',
+      tagline: 'Ideal for Personal Projects and Small Tasks.',
       quota: 10,
       features: [
         {
@@ -30,14 +30,14 @@ const Page = async () => {
         },
         {
           text: '4MB file size limit',
-          footnote: 'The maximum file size of a single PDF file.',
+          footnote: 'The largest size for a single PDF.',
         },
         {
           text: 'Mobile-friendly interface',
         },
         {
-          text: 'Higher-quality responses',
-          footnote: 'Better algorithmic responses for enhanced content quality',
+          text: 'Premium Content Quality',
+          footnote: 'Enhanced algorithmic responses for better results',
           negative: true,
         },
         {
@@ -48,11 +48,11 @@ const Page = async () => {
     },
     {
       plan: 'Pro',
-      tagline: 'For larger projects with higher needs.',
+      tagline: 'The Perfect Solution for Growing Businesses and Professionals.',
       quota: PLANS.find((p) => p.slug === 'pro')!.quota,
       features: [
         {
-          text: '25 pages per PDF',
+          text: '25 Pages per PDF',
           footnote: 'The maximum amount of pages per PDF-file.',
         },
         {
@@ -63,8 +63,33 @@ const Page = async () => {
           text: 'Mobile-friendly interface',
         },
         {
-          text: 'Higher-quality responses',
-          footnote: 'Better algorithmic responses for enhanced content quality',
+          text: 'Premium Content Quality',
+          footnote: 'Enhanced algorithmic responses for better results',
+        },
+        {
+          text: 'Priority support',
+        },
+      ],
+    },
+    {
+      plan: 'Military',
+      tagline: 'Honoring Service with Premium Access at No Cost.',
+      quota: PLANS.find((p) => p.slug === 'pro')!.quota,
+      features: [
+        {
+          text: '25 Pages per PDF',
+          footnote: 'The maximum amount of pages per PDF-file.',
+        },
+        {
+          text: '16MB file size limit',
+          footnote: 'The maximum file size of a single PDF file.',
+        },
+        {
+          text: 'Mobile-friendly interface',
+        },
+        {
+          text: 'Premium Content Quality',
+          footnote: 'Enhanced algorithmic responses for better results',
         },
         {
           text: 'Priority support',
@@ -74,7 +99,7 @@ const Page = async () => {
   ];
   return (
     <>
-      <MaxWidthWrapper className='mb-8 mt-24 text-center max-w-5xl'>
+      <MaxWidthWrapper className='mb-8 mt-24 text-center max-w-7xl'>
         <div className='mx-auto mb-10 sm:m-w-lg'>
           <h1 className='text-6xl font-bold sm:text-7xl'>Pricing</h1>
           <p className='mt-5 text-gray-600 sm:text-lg'>
@@ -82,7 +107,7 @@ const Page = async () => {
             we&apos;ve got you covered.
           </p>
         </div>
-        <div className='pt-12 grid grid-cols-1 gap-10 lg:grid-cols-2'>
+        <div className='px-12 pt-12 grid grid-cols-1 gap-4 lg:grid-cols-3 lg:px-0'>
           <TooltipProvider>
             {pricingItems.map(({ plan, tagline, quota, features }) => {
               const price =
@@ -93,12 +118,19 @@ const Page = async () => {
                 <div
                   key={plan}
                   className={cn('relative rounded-2xl bg-white shadow-lg', {
-                    'border-2 border-green-600 shadow-green-200': plan === 'Pro',
-                    'border border-gray-200': plan !== 'Pro',
+                    'border-2 border-blue-600 shadow-blue-200': plan === 'Pro',
+                    'border-2 border-green-600 shadow-green-200':
+                      plan === 'Military',
+                    'border border-gray-200': plan === 'Free',
                   })}
                 >
-                  {plan === 'Pro' && (
+                  {plan === 'Military' && (
                     <div className='absolute -top-5 left-0 right-0 mx-auto w-32 rounded-full bg-gradient-to-r from-green-600 to-teal-600 px-3 py-2 text-sm font-medium text-white'>
+                      Upgrade Now
+                    </div>
+                  )}
+                  {plan === 'Pro' && (
+                    <div className='absolute -top-5 left-0 right-0 mx-auto w-32 rounded-full bg-gradient-to-r from-blue-600 to-cyan-600 px-3 py-2 text-sm font-medium text-white'>
                       Upgrade Now
                     </div>
                   )}
@@ -129,7 +161,7 @@ const Page = async () => {
                     </div>
                   </div>
 
-                  <ul className='my-10 space-y-5 px-8'>
+                  <ul className='my-10 space-y-5 px-6'>
                     {features.map(({ text, footnote, negative }) => (
                       <li className='flex space-x-5' key={text}>
                         <div className='flex-shrink-0'>
@@ -184,8 +216,19 @@ const Page = async () => {
                         {userId ? 'Try it out' : 'Sign up'}
                         <ArrowRight className='ml-1.5 h-5 w-5' />
                       </Link>
-                    ) : !subscriptionPlan.isSubscribed ? (
+                    ) : !subscriptionPlan.isSubscribed &&
+                      plan !== 'Military' ? (
                       <UpgradeButton />
+                    ) : plan === 'Military' ? (
+                      <Link
+                        href={userId ? '/verify' : '/sign-in'}
+                        className={buttonVariants({
+                          className: 'w-full',
+                        })}
+                      >
+                        {userId ? 'Verify Now' : 'Sign in'}
+                        <ArrowRight className='ml-1.5 h-5 w-5' />
+                      </Link>
                     ) : (
                       <Link
                         href='/sign-in'
