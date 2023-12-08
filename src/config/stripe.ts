@@ -29,7 +29,7 @@ export const PLANS = [
     name: 'Military',
     slug: 'military',
     quota: 50,
-    pagesPerPdf: 25,
+    pagesPerPdf: 50,
     price: {
       amount: 0,
       priceIds: {

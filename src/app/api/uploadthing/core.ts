@@ -67,9 +67,7 @@ const onUploadComplete = async ({
     });
 
     const pagesAmount = pageLevelDocs.length;
-
     const { subscriptionPlan } = metadata;
-
     const { isSubscribed } = subscriptionPlan;
 
     const isProExceeded =
@@ -86,6 +84,7 @@ const onUploadComplete = async ({
           id: createdFile.id,
         },
       });
+      return;
     }
 
     const pineconeIndex = pinecone.Index('summar');
@@ -111,7 +110,6 @@ const onUploadComplete = async ({
         uploadStatus: 'FAILED',
       },
     });
-    console.log('broke');
   }
 };
 export const ourFileRouter = {

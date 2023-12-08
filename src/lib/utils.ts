@@ -46,7 +46,6 @@ export function constructMetadata({
     },
     icons,
     metadataBase: new URL('https://summar-eight.vercel.app'),
-    themeColor: '#FFF',
     ...(noIndex && {
       robots: {
         index: false,

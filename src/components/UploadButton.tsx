@@ -1,13 +1,10 @@
 'use client';
 import { useState } from 'react';
-import { Dialog, DialogClose, DialogContent, DialogTrigger } from './ui/dialog';
+import { Dialog, DialogContent, DialogTrigger } from './ui/dialog';
 import { Button } from './ui/button';
 import { Progress } from './ui/progress';
 import Dropzone from 'react-dropzone';
 import { Cloud, File, Loader2 } from 'lucide-react';
-import { start } from 'repl';
-import { clear } from 'console';
-import { resolve } from 'path';
 import { useUploadThing } from '@/lib/useUploadThing';
 import { useToast } from './ui/use-toast';
 import { useRouter } from 'next/navigation';
@@ -96,7 +93,7 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
                   or drag and drop
                 </p>
                 <p className='text-xs text-zinc-500'>
-                  PDF (up to {isSubscribed ? '16' : '4MB'})
+                  PDF (up to {isSubscribed ? '16MB' : '4MB'})
                 </p>
               </div>
 

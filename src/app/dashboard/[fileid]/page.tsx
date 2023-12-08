@@ -3,6 +3,7 @@ import { redirect, notFound } from 'next/navigation';
 import { db } from '@/db';
 import PdfRenderer from '@/components/PdfRenderer';
 import ChatWrapper from '@/components/Chat/ChatWrapper';
+import { getUserSubscriptionPlan } from '@/lib/stripe';
 
 interface PageProps {
   params: {
@@ -15,6 +16,8 @@ const Page = async ({ params }: PageProps) => {
   const user = await getUser();
 
   if (!user || !user.id) redirect(`/auth-callback?origin=dashboard/${fileid}`);
+
+  const subscriptionPlan = await getUserSubscriptionPlan()
 
   const file = await db.file.findFirst({
     where: {
@@ -34,7 +37,7 @@ const Page = async ({ params }: PageProps) => {
           </div>
         </div>
         <div className='shrink-0 flex-[0.75] border-t border-gray-200 lg:w-96 lg:border-l lg:border-t-0'>
-          <ChatWrapper fileId={file.id} />
+          <ChatWrapper fileId={file.id} subscriptionPlan={subscriptionPlan} />
         </div>
       </div>
     </div>

@@ -5,13 +5,32 @@ import Messages from './Messages';
 import ChatInput from './ChatInput';
 import { trpc } from '@/app/_trpc/client';
 import { Loader2, XCircle, ChevronLeft } from 'lucide-react';
-import { buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { ChatContextProvider } from './ChatContext';
+import { getUserSubscriptionPlan } from '@/lib/stripe';
+import { PLANS } from '@/config/stripe';
+import { redirect } from 'next/navigation';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 interface ChatWrapperProps {
   fileId: string;
+  subscriptionPlan: Awaited<ReturnType<typeof getUserSubscriptionPlan>>;
 }
 
-const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
+const ChatWrapper = ({ fileId, subscriptionPlan }: ChatWrapperProps) => {
+  const [currentlyDeletingFile, setCurrentlyDeletingFile] =
+    useState<boolean>(false);
+  const utils = trpc.useUtils();
+  const router = useRouter();
+  const { mutate: deleteFile } = trpc.deleteFile.useMutation({
+    onSuccess: () => {
+      utils.getUserFiles.invalidate();
+      router.push('/dashboard');
+    },
+    onMutate() {
+      setCurrentlyDeletingFile(true);
+    },
+  });
   const { data, isLoading } = trpc.getFileUploadStatus.useQuery(
     {
       fileId,
@@ -21,6 +40,12 @@ const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
         data?.status === 'SUCCESS' || data?.status === 'FAILED' ? false : 500,
     }
   );
+
+  const ProPagesAmount = PLANS.find((plan) => plan.name === 'Pro')!.pagesPerPdf;
+
+  const freePagesAmount = PLANS.find(
+    (plan) => plan.name === 'Free'
+  )!.pagesPerPdf;
 
   if (isLoading)
     return (
@@ -62,19 +87,29 @@ const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
             <XCircle className='h-8 w-8 text-red-500' />
             <h3 className='font-semibold text-xl'>Too many pages in PDF</h3>
             <p className='text-zinc-500 text-sm'>
-              Your <span className='font-medium'>Free</span> plan supports up to{' '}
-              5 pages per PDF.
+              Your{' '}
+              <span className='font-medium'>
+                {subscriptionPlan.name === 'Pro' ? 'Pro' : 'Free'}
+              </span>{' '}
+              plan supports up to{' '}
+              {subscriptionPlan.name === 'Pro'
+                ? ProPagesAmount
+                : freePagesAmount}{' '}
+              pages per PDF.
             </p>
-            <Link
-              href='/dashboard'
-              className={buttonVariants({
-                variant: 'secondary',
-                className: 'mt-4',
-              })}
+
+            <Button
+              onClick={() => deleteFile({ id: fileId })}
+              variant='secondary'
+              className='mt-4'
             >
-              <ChevronLeft className='h-3 w-3 mr-1.5' />
+              {currentlyDeletingFile ? (
+                <Loader2 className='h-4 w-4 mr-1 animate-spin' />
+              ) : (
+                <ChevronLeft className='h-3 w-3 mr-1.5' />
+              )}
               Back
-            </Link>
+            </Button>
           </div>
         </div>
 

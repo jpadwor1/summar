@@ -70,7 +70,7 @@ const BillingForm = ({ subscriptionPlan }: BillingFormProps) => {
                   : 'Your plan will renew on '}
                 {format(
                   subscriptionPlan.stripeCurrentPeriodEnd!,
-                  'MMM,do,yyyy'
+                  'MMM do,yyyy'
                 )}
               </p>
             ) : null}
