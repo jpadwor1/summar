@@ -4,6 +4,7 @@ import { Icons } from '../Icons';
 import ReactMarkdown from 'react-markdown';
 import format from 'date-fns/format';
 import { forwardRef } from 'react';
+import Image from 'next/image';
 
 interface MessageProps {
   message: ExtendedMessage;
@@ -32,7 +33,13 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
           {message.isUserMessage ? (
             <Icons.user className=' fill-zinc-200 text-zinc-200 h-3/4 w-3/4' />
           ) : (
-            <Icons.logo className=' fill-zinc-300 h-3/4 w-3/4' />
+            <Image
+              src="/apple-touch-icon.png"
+              alt="system avatar"
+              width={180}
+              height={180}
+              className='rounded-full' />
+            
           )}
         </div>
 
