@@ -47,6 +47,10 @@ const ChatWrapper = ({ fileId, subscriptionPlan }: ChatWrapperProps) => {
     (plan) => plan.name === 'Free'
   )!.pagesPerPdf;
 
+  const militaryPagesAmount = PLANS.find(
+    (plan) => plan.name === 'Military'
+  )!.pagesPerPdf;
+  
   if (isLoading)
     return (
       <div className='relative min-h-full bg-zinc-50 flex divide-y divide-zinc-200 flex-col justify-between gap-2'>

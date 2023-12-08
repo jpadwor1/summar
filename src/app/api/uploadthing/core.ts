@@ -74,8 +74,10 @@ const onUploadComplete = async ({
       pagesAmount > PLANS.find((plan) => plan.name === 'Pro')!.pagesPerPdf;
     const isFreeExceeded =
       pagesAmount > PLANS.find((plan) => plan.name === 'Free')!.pagesPerPdf;
+    const isMilitaryExceeded =
+      pagesAmount > PLANS.find((plan) => plan.name === 'Military')!.pagesPerPdf;
 
-    if ((isSubscribed && isProExceeded) || (!isSubscribed && isFreeExceeded)) {
+    if ((isSubscribed && isProExceeded) || (isSubscribed && isMilitaryExceeded) || (!isSubscribed && isFreeExceeded)) {
       await db.file.update({
         data: {
           uploadStatus: 'FAILED',

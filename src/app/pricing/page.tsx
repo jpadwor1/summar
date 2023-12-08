@@ -52,7 +52,7 @@ const Page = async () => {
       quota: PLANS.find((p) => p.slug === 'pro')!.quota,
       features: [
         {
-          text: '25 Pages per PDF',
+          text: '225 Pages per PDF',
           footnote: 'The maximum amount of pages per PDF-file.',
         },
         {
@@ -77,7 +77,7 @@ const Page = async () => {
       quota: PLANS.find((p) => p.slug === 'pro')!.quota,
       features: [
         {
-          text: '25 Pages per PDF',
+          text: '1025 Pages per PDF',
           footnote: 'The maximum amount of pages per PDF-file.',
         },
         {
@@ -216,19 +216,39 @@ const Page = async () => {
                         {userId ? 'Try it out' : 'Sign up'}
                         <ArrowRight className='ml-1.5 h-5 w-5' />
                       </Link>
-                    ) : !subscriptionPlan.isSubscribed &&
-                      plan !== 'Military' ? (
-                      <UpgradeButton />
-                    ) : plan === 'Military' ? (
+                    ) : plan === 'Pro' && !subscriptionPlan.isSubscribed ? (
                       <Link
-                        href={userId ? '/verify' : '/sign-in'}
+                        href='/api/auth/register?'
                         className={buttonVariants({
                           className: 'w-full',
                         })}
                       >
-                        {userId ? 'Verify Now' : 'Sign in'}
+                        Sign up
                         <ArrowRight className='ml-1.5 h-5 w-5' />
                       </Link>
+                    ) : plan === 'Military' &&
+                      !subscriptionPlan.isSubscribed ? (
+                      <Link
+                        href='/api/auth/register?'
+                        className={buttonVariants({
+                          className: 'w-full',
+                        })}
+                      >
+                        Sign up
+                        <ArrowRight className='ml-1.5 h-5 w-5' />
+                      </Link>
+                    ) : plan === 'Pro' && subscriptionPlan.isSubscribed ? (
+                      <Link
+                        href={userId ? '/dashboard' : '/api/auth/register?'}
+                        className={buttonVariants({
+                          className: 'w-full',
+                        })}
+                      >
+                        Try it out
+                        <ArrowRight className='ml-1.5 h-5 w-5' />
+                      </Link>
+                    ) : plan === 'Pro' || plan === 'Military' ? (
+                      <UpgradeButton planName={plan} userId={!!userId} />
                     ) : (
                       <Link
                         href='/sign-in'
