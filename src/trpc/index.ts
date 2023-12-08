@@ -176,7 +176,6 @@ export const appRouter = router({
     const stripeSession = await stripe.checkout.sessions.create({
       success_url: billingUrl,
       cancel_url: billingUrl,
-      return_url: billingUrl,
       payment_method_types: ['card'],
       mode: 'subscription',
       billing_address_collection: 'auto',
@@ -190,7 +189,6 @@ export const appRouter = router({
         userId: userId,
       },
     });
-    console.log(stripeSession.url);
     return { url: stripeSession.url };
   }),
 

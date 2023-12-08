@@ -216,39 +216,54 @@ const Page = async () => {
                         {userId ? 'Try it out' : 'Sign up'}
                         <ArrowRight className='ml-1.5 h-5 w-5' />
                       </Link>
-                    ) : plan === 'Pro' && !subscriptionPlan.isSubscribed ? (
-                      <Link
-                        href='/api/auth/register?'
-                        className={buttonVariants({
-                          className: 'w-full',
-                        })}
-                      >
-                        Sign up
-                        <ArrowRight className='ml-1.5 h-5 w-5' />
-                      </Link>
-                    ) : plan === 'Military' &&
-                      !subscriptionPlan.isSubscribed ? (
-                      <Link
-                        href='/api/auth/register?'
-                        className={buttonVariants({
-                          className: 'w-full',
-                        })}
-                      >
-                        Sign up
-                        <ArrowRight className='ml-1.5 h-5 w-5' />
-                      </Link>
-                    ) : plan === 'Pro' && subscriptionPlan.isSubscribed ? (
-                      <Link
-                        href={userId ? '/dashboard' : '/api/auth/register?'}
-                        className={buttonVariants({
-                          className: 'w-full',
-                        })}
-                      >
-                        Try it out
-                        <ArrowRight className='ml-1.5 h-5 w-5' />
-                      </Link>
-                    ) : plan === 'Pro' || plan === 'Military' ? (
-                      <UpgradeButton planName={plan} userId={!!userId} />
+                    ) : plan === 'Pro' ? (
+                      !userId ? (
+                        <Link
+                          href='/api/auth/register?'
+                          className={buttonVariants({
+                            className: 'w-full',
+                          })}
+                        >
+                          Sign up
+                          <ArrowRight className='ml-1.5 h-5 w-5' />
+                        </Link>
+                      ) : !subscriptionPlan.isSubscribed ? (
+                        <UpgradeButton planName='Pro' userId={!!userId} />
+                      ) : (
+                        <Link
+                          href='/dashboard'
+                          className={buttonVariants({
+                            className: 'w-full',
+                          })}
+                        >
+                          Try it out
+                          <ArrowRight className='ml-1.5 h-5 w-5' />
+                        </Link>
+                      )
+                    ) : plan === 'Military' ? (
+                      !userId ? (
+                        <Link
+                          href='/api/auth/register?'
+                          className={buttonVariants({
+                            className: 'w-full',
+                          })}
+                        >
+                          Sign up
+                          <ArrowRight className='ml-1.5 h-5 w-5' />
+                        </Link>
+                      ) : !subscriptionPlan.isSubscribed ? (
+                        <UpgradeButton planName='Military' userId={!!userId} />
+                      ) : (
+                        <Link
+                          href='/dashboard'
+                          className={buttonVariants({
+                            className: 'w-full',
+                          })}
+                        >
+                          Try it out
+                          <ArrowRight className='ml-1.5 h-5 w-5' />
+                        </Link>
+                      )
                     ) : (
                       <Link
                         href='/sign-in'
