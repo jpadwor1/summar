@@ -45,7 +45,7 @@ export function constructMetadata({
       creator: 'john',
     },
     icons,
-    metadataBase: new URL('https://summar-eight.vercel.app'),
+    metadataBase: new URL('https://summarai.io'),
     ...(noIndex && {
       robots: {
         index: false,

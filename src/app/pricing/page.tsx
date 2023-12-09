@@ -107,7 +107,7 @@ const Page = async () => {
             we&apos;ve got you covered.
           </p>
         </div>
-        <div className='px-12 pt-12 grid grid-cols-1 gap-4 lg:grid-cols-3 lg:px-0'>
+        <div className='px-12 pt-12 grid grid-cols-1 gap-7 lg:gap-4 lg:grid-cols-3 lg:px-0'>
           <TooltipProvider>
             {pricingItems.map(({ plan, tagline, quota, features }) => {
               const price =
@@ -117,7 +117,7 @@ const Page = async () => {
               return (
                 <div
                   key={plan}
-                  className={cn('relative rounded-2xl bg-white shadow-lg', {
+                  className={cn('relative rounded-2xl bg-white shadow-xl', {
                     'border-2 border-blue-600 shadow-blue-200': plan === 'Pro',
                     'border-2 border-green-600 shadow-green-200':
                       plan === 'Military',
@@ -139,7 +139,7 @@ const Page = async () => {
                     <h3 className='my-3 text-center font-display text-3xl font-bold'>
                       {plan}
                     </h3>
-                    <p className='text-gray-500'>{tagline}</p>
+                    <div className='min-h-[50px]'><p className='text-gray-500'>{tagline}</p></div>
                     <p className='my-5 font-display text-6xl font-semibold'>
                       ${price}
                     </p>
@@ -260,7 +260,7 @@ const Page = async () => {
                             className: 'w-full',
                           })}
                         >
-                          Try it out
+                          Verify Now
                           <ArrowRight className='ml-1.5 h-5 w-5' />
                         </Link>
                       )
