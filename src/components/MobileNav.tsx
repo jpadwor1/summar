@@ -9,7 +9,7 @@ import {
   LoginLink,
   LogoutLink,
   RegisterLink,
-} from '@kinde-oss/kinde-auth-nextjs/dist/types/components';
+} from '@kinde-oss/kinde-auth-nextjs/server';
 
 interface MobileNavProps {
   isAuth: boolean;
