@@ -28,6 +28,7 @@ const onUploadComplete = async ({
   metadata: Awaited<ReturnType<typeof middleware>>;
   file: { key: string; name: string; url: string };
 }) => {
+  console.log('upload complete');
   const doesFileExist = await db.file.findFirst({
     where: {
       key: file.key,
