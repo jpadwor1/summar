@@ -255,6 +255,17 @@ const Page = async () => {
                         </Link>
                       ) : !subscriptionPlan.isSubscribed ? (
                         <UpgradeButton planName='Military' userId={!!userId} />
+                      ) : subscriptionPlan.price?.priceIds.test ===
+                        'price_1OL9nrGa4QqaSZrhI0PKu1FV' ? (
+                        <Link
+                          href='/dashboard'
+                          className={buttonVariants({
+                            className: 'w-full',
+                          })}
+                        >
+                          Try it out
+                          <ArrowRight className='ml-1.5 h-5 w-5' />
+                        </Link>
                       ) : (
                         <UpgradeButton planName='Military' userId={!!userId} />
                       )

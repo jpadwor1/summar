@@ -53,7 +53,7 @@ export const appRouter = router({
       const { code } = input;
       const clientId = process.env.NEXT_PUBLIC_IDME_CLIENT_ID;
       const clientSecret = process.env.NEXT_PUBLIC_IDME_CLIENT_SECRET;
-      const redirectUri = 'https://localhost:3000/idMeCallback?origin=pricing'; // Replace with your callback URL
+      const redirectUri = 'https://summarai.io/idMeCallback?origin=pricing'; // Replace with your callback URL
 
       // const state = encodeURIComponent(
       //   JSON.stringify({ originUrl: window.location.pathname })
@@ -243,55 +243,54 @@ export const appRouter = router({
     return { url: stripeSession.url };
   }),
 
-  createMilitaryStripeSession: privateProcedure
-    .mutation(async ({ ctx }) => {
-      const { userId } = ctx;
-      const billingUrl = absoluteUrl('/dashboard/billing');
-      const militaryPriceId = PLANS.find((plan) => plan.name === 'Military')
-        ?.price.priceIds.test;
-      if (!userId) throw new TRPCError({ code: 'UNAUTHORIZED' });
-      const dbUser = await db.user.findFirst({
-        where: {
-          id: userId,
-        },
-      });
+  createMilitaryStripeSession: privateProcedure.mutation(async ({ ctx }) => {
+    const { userId } = ctx;
+    const billingUrl = absoluteUrl('/dashboard/billing');
+    const militaryPriceId = PLANS.find((plan) => plan.name === 'Military')
+      ?.price.priceIds.test;
+    if (!userId) throw new TRPCError({ code: 'UNAUTHORIZED' });
+    const dbUser = await db.user.findFirst({
+      where: {
+        id: userId,
+      },
+    });
 
-      if (!dbUser) throw new TRPCError({ code: 'UNAUTHORIZED' });
+    if (!dbUser) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
-      const subscriptionPlan = await getUserSubscriptionPlan();
+    const subscriptionPlan = await getUserSubscriptionPlan();
 
-      if (
-        subscriptionPlan.isSubscribed &&
-        dbUser.stripeCustomerId &&
-        dbUser.stripePriceId === militaryPriceId
-      ) {
-        const stripeSession = await stripe.billingPortal.sessions.create({
-          customer: dbUser.stripeCustomerId,
-          return_url: billingUrl,
-        });
-
-        return { url: stripeSession.url };
-      }
-      const stripeSession = await stripe.checkout.sessions.create({
-        success_url: billingUrl,
-        cancel_url: billingUrl,
-        payment_method_types: ['card'],
-        mode: 'subscription',
-        billing_address_collection: 'auto',
-        line_items: [
-          {
-            price: PLANS.find((plan) => plan.name === 'Military')?.price.priceIds
-              .test,
-            quantity: 1,
-          },
-        ],
-        metadata: {
-          userId: userId,
-        },
+    if (
+      subscriptionPlan.isSubscribed &&
+      dbUser.stripeCustomerId &&
+      dbUser.stripePriceId === militaryPriceId
+    ) {
+      const stripeSession = await stripe.billingPortal.sessions.create({
+        customer: dbUser.stripeCustomerId,
+        return_url: billingUrl,
       });
 
       return { url: stripeSession.url };
-    }),
+    }
+    const stripeSession = await stripe.checkout.sessions.create({
+      success_url: billingUrl,
+      cancel_url: billingUrl,
+      payment_method_types: ['card'],
+      mode: 'subscription',
+      billing_address_collection: 'auto',
+      line_items: [
+        {
+          price: PLANS.find((plan) => plan.name === 'Military')?.price.priceIds
+            .test,
+          quantity: 1,
+        },
+      ],
+      metadata: {
+        userId: userId,
+      },
+    });
+
+    return { url: stripeSession.url };
+  }),
 });
 
 export type AppRouter = typeof appRouter;
