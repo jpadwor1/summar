@@ -139,7 +139,9 @@ const Page = async () => {
                     <h3 className='my-3 text-center font-display text-3xl font-bold'>
                       {plan}
                     </h3>
-                    <div className='min-h-[50px]'><p className='text-gray-500'>{tagline}</p></div>
+                    <div className='min-h-[50px]'>
+                      <p className='text-gray-500'>{tagline}</p>
+                    </div>
                     <p className='my-5 font-display text-6xl font-semibold'>
                       ${price}
                     </p>
@@ -254,15 +256,7 @@ const Page = async () => {
                       ) : !subscriptionPlan.isSubscribed ? (
                         <UpgradeButton planName='Military' userId={!!userId} />
                       ) : (
-                        <Link
-                          href='/dashboard'
-                          className={buttonVariants({
-                            className: 'w-full',
-                          })}
-                        >
-                          Verify Now
-                          <ArrowRight className='ml-1.5 h-5 w-5' />
-                        </Link>
+                        <UpgradeButton planName='Military' userId={!!userId} />
                       )
                     ) : (
                       <Link

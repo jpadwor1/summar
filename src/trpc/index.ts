@@ -35,6 +35,58 @@ export const appRouter = router({
 
     return { success: true };
   }),
+  redirectToIDme: publicProcedure.query(async ({ ctx }) => {
+    const clientId = process.env.IDME_CLIENT_ID;
+    const redirectUri = absoluteUrl('/api/auth/idMeCallback');
+    const scope = 'military'; // Define scope as per ID.me requirements
+    // const state = encodeURIComponent(
+    //   JSON.stringify({ origin: ctx.origin })
+    // );
+
+    const authUrl = `https://api.id.me/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}`;
+
+    return { url: authUrl };
+  }),
+  getMilitaryUser: privateProcedure
+    .input(z.object({ code: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { code } = input;
+      const clientId = process.env.IDME_CLIENT_ID;
+      const clientSecret = process.env.IDME_CLIENT_SECRET;
+      const redirectUri = absoluteUrl('/idMeCallback'); // Replace with your callback URL
+
+      const state = encodeURIComponent(
+        JSON.stringify({ originUrl: window.location.pathname })
+      );
+      const tokenUrl = 'https://api.id.me/oauth/token';
+
+      try {
+        const response = await fetch(tokenUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            grant_type: 'authorization_code',
+            code: code,
+            client_id: clientId,
+            client_secret: clientSecret,
+            redirect_uri: redirectUri,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to exchange code for token');
+        }
+
+        return data.access_token;
+      } catch (error) {
+        console.error('Error exchanging code for token:', error);
+        throw error;
+      }
+    }),
   getUserFiles: privateProcedure.query(async ({ ctx }) => {
     const { userId, user } = ctx;
 
@@ -198,9 +250,9 @@ export const appRouter = router({
       const { userId } = ctx;
       const { planName } = input;
       const billingUrl = absoluteUrl('/dashboard/billing');
-
+      const militaryPriceId = PLANS.find((plan) => plan.name === planName)
+        ?.price.priceIds.test;
       if (!userId) throw new TRPCError({ code: 'UNAUTHORIZED' });
-
       const dbUser = await db.user.findFirst({
         where: {
           id: userId,
@@ -211,7 +263,11 @@ export const appRouter = router({
 
       const subscriptionPlan = await getUserSubscriptionPlan();
 
-      if (subscriptionPlan.isSubscribed && dbUser.stripeCustomerId) {
+      if (
+        subscriptionPlan.isSubscribed &&
+        dbUser.stripeCustomerId &&
+        dbUser.stripePriceId === militaryPriceId
+      ) {
         const stripeSession = await stripe.billingPortal.sessions.create({
           customer: dbUser.stripeCustomerId,
           return_url: billingUrl,
@@ -219,7 +275,6 @@ export const appRouter = router({
 
         return { url: stripeSession.url };
       }
-
       const stripeSession = await stripe.checkout.sessions.create({
         success_url: billingUrl,
         cancel_url: billingUrl,
