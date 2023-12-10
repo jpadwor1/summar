@@ -1,0 +1,3 @@
+/sign-in   /api/auth/login?   301!
+/sign-up   /api/auth/register?   301!
+/sign-out  /api/auth/logout?   301!
