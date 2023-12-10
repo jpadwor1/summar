@@ -43,9 +43,9 @@ const MobileNav = ({ isAuth, isSubscribed }: MobileNavProps) => {
               <>
                 <li>
                   <Link
-                    onClick={() => closeOnCurrent('/sign-up')}
+                    onClick={() => closeOnCurrent('/api/auth/register')}
                     className='flex items-center w-full font-semibold text-green-600'
-                    href='/sign-up'
+                    href='/api/auth/register'
                   >
                     Get Started <ArrowRight className='ml-2 h-5 w-5' />
                   </Link>
@@ -85,7 +85,7 @@ const MobileNav = ({ isAuth, isSubscribed }: MobileNavProps) => {
                 {isSubscribed ? (
                   <li>
                     <Link
-                      onClick={() => closeOnCurrent('/dashboard')}
+                      onClick={() => closeOnCurrent('/dashboard/billing')}
                       className='flex items-center w-full font-semibold '
                       href='/dashboard/billing'
                     >
@@ -95,7 +95,7 @@ const MobileNav = ({ isAuth, isSubscribed }: MobileNavProps) => {
                 ) : (
                   <li>
                     <Link
-                      onClick={() => closeOnCurrent('/dashboard')}
+                      onClick={() => closeOnCurrent('/pricing')}
                       className='flex items-center w-full font-semibold '
                       href='/pricing'
                     >
