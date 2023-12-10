@@ -53,9 +53,9 @@ const MobileNav = ({ isAuth, isSubscribed }: MobileNavProps) => {
                 <li className='my-3 h-px w-full bg-gray-300'></li>
                 <li>
                   <Link
-                    onClick={() => closeOnCurrent('/sign-in')}
+                    onClick={() => closeOnCurrent('/api/auth/login')}
                     className='flex items-center w-full font-semibold '
-                    href='/sign-in'
+                    href='/api/auth/login'
                   >
                     Sign in
                   </Link>
@@ -87,9 +87,9 @@ const MobileNav = ({ isAuth, isSubscribed }: MobileNavProps) => {
                     <Link
                       onClick={() => closeOnCurrent('/dashboard')}
                       className='flex items-center w-full font-semibold '
-                      href='/pricing'
+                      href='/dashboard/billing'
                     >
-                      Upgrade <Gem className='text-green-600 ml-2 h-5 w-5' />
+                      Manage Subscription
                     </Link>
                   </li>
                 ) : (
@@ -97,9 +97,9 @@ const MobileNav = ({ isAuth, isSubscribed }: MobileNavProps) => {
                     <Link
                       onClick={() => closeOnCurrent('/dashboard')}
                       className='flex items-center w-full font-semibold '
-                      href='/dashboard/billing'
+                      href='/pricing'
                     >
-                      Manage Subscription
+                      Upgrade <Gem className='text-green-600 ml-2 h-5 w-5' />
                     </Link>
                   </li>
                 )}
@@ -108,7 +108,7 @@ const MobileNav = ({ isAuth, isSubscribed }: MobileNavProps) => {
                 <li>
                   <Link
                     className='flex items-center w-full font-semibold '
-                    href='/sign-out'
+                    href='/api/auth/logout'
                   >
                     Sign out
                   </Link>
