@@ -108,12 +108,18 @@ const MobileNav = ({ isAuth, isSubscribed }: MobileNavProps) => {
                 <li className='my-3 h-px w-full bg-gray-300'></li>
 
                 <li>
-                  <Link
+                  {/* <Link
                     className='flex items-center w-full font-semibold '
                     href='/api/auth/logout'
                   >
                     Sign out
-                  </Link>
+                  </Link> */}
+                  <a
+                    className='flex items-center w-full font-semibold '
+                    href='/sign-out'
+                  >
+                    Logout
+                  </a>
                 </li>
               </>
             )}
