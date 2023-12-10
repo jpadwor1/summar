@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getUserSubscriptionPlan } from '@/lib/stripe';
-import { LogoutLink } from '@kinde-oss/kinde-auth-nextjs/server';
 
 interface MobileNavProps {
   isAuth: boolean;
@@ -109,9 +108,12 @@ const MobileNav = ({ isAuth, isSubscribed }: MobileNavProps) => {
                 <li className='my-3 h-px w-full bg-gray-300'></li>
 
                 <li>
-                  <LogoutLink className='flex items-center w-full font-semibold '>
+                  <Link
+                    className='flex items-center w-full font-semibold '
+                    href='/sign-out'
+                  >
                     Sign out
-                  </LogoutLink>
+                  </Link>
                 </li>
               </>
             )}

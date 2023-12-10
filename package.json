@@ -1,5 +1,10 @@
 {
   "name": "summar",
+  "browser": {
+    "fs": false,
+    "os": false,
+    "path": false
+  },
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,11 +13,6 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate"
-  },
-  "browser": {
-    "fs": false,
-    "os": false,
-    "path": false
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",
