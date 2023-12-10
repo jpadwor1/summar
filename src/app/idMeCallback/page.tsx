@@ -1,3 +1,4 @@
+'use client'
 import { Loader2 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { trpc } from '../_trpc/client';
@@ -8,12 +9,18 @@ const Page = () => {
   const searchParams = useSearchParams();
   const code = searchParams.get('code');
   const origin = searchParams.get('origin');
+  const { mutate: createMilitaryStripeSession } = trpc.createMilitaryStripeSession.useMutation({
+    onSuccess: ({ url }) => {
+      window.location.href = url ?? '/dashboard/billing';
+    },
+  });
   // Use the useMutation hook to call the tRPC procedure
   const { mutate, isSuccess, isError, error } =
     trpc.getMilitaryUser.useMutation({
       onSuccess: () => {
+        createMilitaryStripeSession();
         // Redirect after successful verification
-        router.push(origin ? `/${origin}` : '/dashboard');
+        router.push('/dashboard');
       },
       onError: (err) => {
         if (err.data?.code === 'UNAUTHORIZED') {

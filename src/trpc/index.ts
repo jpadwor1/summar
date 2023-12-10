@@ -51,13 +51,13 @@ export const appRouter = router({
     .input(z.object({ code: z.string() }))
     .mutation(async ({ input, ctx }) => {
       const { code } = input;
-      const clientId = process.env.IDME_CLIENT_ID;
-      const clientSecret = process.env.IDME_CLIENT_SECRET;
-      const redirectUri = absoluteUrl('/idMeCallback'); // Replace with your callback URL
+      const clientId = process.env.NEXT_PUBLIC_IDME_CLIENT_ID;
+      const clientSecret = process.env.NEXT_PUBLIC_IDME_CLIENT_SECRET;
+      const redirectUri = 'https://localhost:3000/idMeCallback?origin=pricing'; // Replace with your callback URL
 
-      const state = encodeURIComponent(
-        JSON.stringify({ originUrl: window.location.pathname })
-      );
+      // const state = encodeURIComponent(
+      //   JSON.stringify({ originUrl: window.location.pathname })
+      // );
       const tokenUrl = 'https://api.id.me/oauth/token';
 
       try {
@@ -221,7 +221,6 @@ export const appRouter = router({
         customer: dbUser.stripeCustomerId,
         return_url: billingUrl,
       });
-      console.log(stripeSession.url);
       return { url: stripeSession.url };
     }
 
@@ -245,12 +244,10 @@ export const appRouter = router({
   }),
 
   createMilitaryStripeSession: privateProcedure
-    .input(z.object({ planName: z.string() }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx }) => {
       const { userId } = ctx;
-      const { planName } = input;
       const billingUrl = absoluteUrl('/dashboard/billing');
-      const militaryPriceId = PLANS.find((plan) => plan.name === planName)
+      const militaryPriceId = PLANS.find((plan) => plan.name === 'Military')
         ?.price.priceIds.test;
       if (!userId) throw new TRPCError({ code: 'UNAUTHORIZED' });
       const dbUser = await db.user.findFirst({
@@ -283,7 +280,7 @@ export const appRouter = router({
         billing_address_collection: 'auto',
         line_items: [
           {
-            price: PLANS.find((plan) => plan.name === planName)?.price.priceIds
+            price: PLANS.find((plan) => plan.name === 'Military')?.price.priceIds
               .test,
             quantity: 1,
           },
