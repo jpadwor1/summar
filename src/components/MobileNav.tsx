@@ -110,7 +110,7 @@ const MobileNav = ({ isAuth, isSubscribed }: MobileNavProps) => {
                 <li>
                   <Link
                     className='flex items-center w-full font-semibold '
-                    href='/api/auth/logout'
+                    href='/api/auth/logout?'
                   >
                     Sign out
                   </Link>
