@@ -7,6 +7,7 @@ import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { PineconeStore } from 'langchain/vectorstores/pinecone';
 import { getUserSubscriptionPlan } from '@/lib/stripe';
 import { PLANS } from '@/config/stripe';
+import { redirect } from 'next/navigation';
 
 const f = createUploadthing();
 
@@ -77,7 +78,11 @@ const onUploadComplete = async ({
     const isMilitaryExceeded =
       pagesAmount > PLANS.find((plan) => plan.name === 'Military')!.pagesPerPdf;
 
-    if ((isSubscribed && isProExceeded) || (isSubscribed && isMilitaryExceeded) || (!isSubscribed && isFreeExceeded)) {
+    if (
+      (isSubscribed && isProExceeded) ||
+      (isSubscribed && isMilitaryExceeded) ||
+      (!isSubscribed && isFreeExceeded)
+    ) {
       await db.file.update({
         data: {
           uploadStatus: 'FAILED',

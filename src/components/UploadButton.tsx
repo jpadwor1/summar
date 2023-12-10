@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Dialog, DialogContent, DialogTrigger } from './ui/dialog';
 import { Button } from './ui/button';
 import { Progress } from './ui/progress';
-import Dropzone from 'react-dropzone';
+import Dropzone, { useDropzone } from 'react-dropzone'
 import { Cloud, File, Loader2 } from 'lucide-react';
 import { useUploadThing } from '@/lib/useUploadThing';
 import { useToast } from './ui/use-toast';
@@ -18,6 +18,7 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
     isSubscribed ? 'proPlanUploader' : 'freePlanUploader'
   );
   const { toast } = useToast();
+  const { open } = useDropzone()
   const { mutate: startPolling } = trpc.getFile.useMutation({
     onSuccess: (file) => {
       router.push(`/dashboard/${file.id}`);
@@ -42,9 +43,9 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
   return (
     <Dropzone
       multiple={false}
+      noClick={true}
       onDrop={async (acceptedFile) => {
         setIsUploading(true);
-
         const progressInterval = startSimulatedProgress();
 
         // handle file uploading
@@ -80,6 +81,7 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
         <div
           {...getRootProps()}
           className='border h-64 m-4 border-dashed border-gray-300 rounded-lg'
+          onClick={open}
         >
           <div className='flex items-center justify-center w-full h-full'>
             <label
