@@ -9,6 +9,11 @@
     "lint": "next lint",
     "postinstall": "prisma generate"
   },
+  "browser": {
+    "fs": false,
+    "os": false,
+    "path": false
+  },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",
     "@kinde-oss/kinde-auth-nextjs": "^2.0.10",
