@@ -5,6 +5,11 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getUserSubscriptionPlan } from '@/lib/stripe';
+import {
+  LoginLink,
+  LogoutLink,
+  RegisterLink,
+} from '@kinde-oss/kinde-auth-nextjs/dist/types/components';
 
 interface MobileNavProps {
   isAuth: boolean;
@@ -42,23 +47,21 @@ const MobileNav = ({ isAuth, isSubscribed }: MobileNavProps) => {
             {!isAuth ? (
               <>
                 <li>
-                  <Link
+                  <RegisterLink
                     onClick={() => closeOnCurrent('/api/auth/register')}
                     className='flex items-center w-full font-semibold text-green-600'
-                    href='/api/auth/register'
                   >
                     Get Started <ArrowRight className='ml-2 h-5 w-5' />
-                  </Link>
+                  </RegisterLink>
                 </li>
                 <li className='my-3 h-px w-full bg-gray-300'></li>
                 <li>
-                  <Link
-                    onClick={() => closeOnCurrent('/api/auth/login?')}
+                  <LoginLink
+                    onClick={() => closeOnCurrent('/dashboard')}
                     className='flex items-center w-full font-semibold '
-                    href='/api/auth/login?'
                   >
                     Sign in
-                  </Link>
+                  </LoginLink>
                 </li>
                 <li className='my-3 h-px w-full bg-gray-300'></li>
                 <li>
@@ -108,12 +111,9 @@ const MobileNav = ({ isAuth, isSubscribed }: MobileNavProps) => {
                 <li className='my-3 h-px w-full bg-gray-300'></li>
 
                 <li>
-                  <Link
-                    className='flex items-center w-full font-semibold '
-                    href='/api/auth/logout?'
-                  >
+                  <LogoutLink className='flex items-center w-full font-semibold '>
                     Sign out
-                  </Link>
+                  </LogoutLink>
                 </li>
               </>
             )}
