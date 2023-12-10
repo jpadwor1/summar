@@ -209,7 +209,7 @@ const Page = async () => {
                   <div className='p-5'>
                     {plan === 'Free' ? (
                       <Link
-                        href={userId ? '/dashboard' : '/api/auth/register?'}
+                        href={userId ? '/dashboard' : '/sign-up'}
                         className={buttonVariants({
                           className: 'w-full',
                           variant: 'secondary',
@@ -221,7 +221,7 @@ const Page = async () => {
                     ) : plan === 'Pro' ? (
                       !userId ? (
                         <Link
-                          href='/api/auth/register?'
+                          href='/sign-up'
                           className={buttonVariants({
                             className: 'w-full',
                           })}
@@ -245,7 +245,7 @@ const Page = async () => {
                     ) : plan === 'Military' ? (
                       !userId ? (
                         <Link
-                          href='/api/auth/register?'
+                          href='/sign-up'
                           className={buttonVariants({
                             className: 'w-full',
                           })}
@@ -271,7 +271,7 @@ const Page = async () => {
                       )
                     ) : (
                       <Link
-                        href='/api/auth/login?'
+                        href='/sign-in'
                         className={buttonVariants({
                           className: 'w-full',
                         })}
