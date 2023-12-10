@@ -25,7 +25,7 @@ const Page = () => {
       },
       onError: (err) => {
         if (err.data?.code === 'UNAUTHORIZED') {
-          router.push('/api/auth/login');
+          router.push('/api/auth/login?');
         }
       },
     });

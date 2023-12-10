@@ -271,7 +271,7 @@ const Page = async () => {
                       )
                     ) : (
                       <Link
-                        href='/api/auth/login'
+                        href='/api/auth/login?'
                         className={buttonVariants({
                           className: 'w-full',
                         })}

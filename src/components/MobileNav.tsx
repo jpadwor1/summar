@@ -53,9 +53,9 @@ const MobileNav = ({ isAuth, isSubscribed }: MobileNavProps) => {
                 <li className='my-3 h-px w-full bg-gray-300'></li>
                 <li>
                   <Link
-                    onClick={() => closeOnCurrent('/api/auth/login')}
+                    onClick={() => closeOnCurrent('/api/auth/login?')}
                     className='flex items-center w-full font-semibold '
-                    href='/api/auth/login'
+                    href='/api/auth/login?'
                   >
                     Sign in
                   </Link>
@@ -82,6 +82,8 @@ const MobileNav = ({ isAuth, isSubscribed }: MobileNavProps) => {
                     Dashboard
                   </Link>
                 </li>
+                <li className='my-3 h-px w-full bg-gray-300'></li>
+
                 {isSubscribed ? (
                   <li>
                     <Link
