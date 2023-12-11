@@ -34,12 +34,12 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
             <Icons.user className=' fill-zinc-200 text-zinc-200 h-3/4 w-3/4' />
           ) : (
             <Image
-              src="/apple-touch-icon.png"
-              alt="system avatar"
+              src='/apple-touch-icon.png'
+              alt='system avatar'
               width={180}
               height={180}
-              className='rounded-full' />
-            
+              className='rounded-full'
+            />
           )}
         </div>
 
@@ -77,7 +77,7 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                   'text-green-200': message.isUserMessage,
                 })}
               >
-                {format(new Date(message.createdAt), 'HH:mm')}
+                {format(new Date(message.createdAt), 'MM/dd/yy @ hh:mm aaaa')}
               </div>
             ) : null}
           </div>
@@ -87,5 +87,5 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
   }
 );
 
-Message.displayName = 'Message'
+Message.displayName = 'Message';
 export default Message;
