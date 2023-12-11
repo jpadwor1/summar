@@ -21,7 +21,7 @@ const Page = () => {
       onSuccess: () => {
         createMilitaryStripeSession();
         // Redirect after successful verification
-        router.push('/dashboard');
+        // router.push('/dashboard');
       },
       onError: (err) => {
         if (err.data?.code === 'UNAUTHORIZED') {

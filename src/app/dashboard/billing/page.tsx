@@ -1,10 +1,13 @@
-import { getUserSubscriptionPlan } from "@/lib/stripe"
-import BillingForm from "@/components/BillingForm"
+import { getUserSubscriptionPlan } from '@/lib/stripe';
+import BillingForm from '@/components/BillingForm';
+import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 const Page = async () => {
-  const subscriptionPlan = await getUserSubscriptionPlan()
+  const subscriptionPlan = await getUserSubscriptionPlan();
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+  const userId = user?.id;
 
+  return <BillingForm subscriptionPlan={subscriptionPlan} userId={!!userId} />;
+};
 
-  return <BillingForm subscriptionPlan={subscriptionPlan}/>
-}
-
-export default Page
+export default Page;

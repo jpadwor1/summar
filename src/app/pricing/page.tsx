@@ -230,7 +230,7 @@ const Page = async () => {
                           <ArrowRight className='ml-1.5 h-5 w-5' />
                         </Link>
                       ) : !subscriptionPlan.isSubscribed ? (
-                        <UpgradeButton planName='Pro' userId={!!userId} />
+                        <UpgradeButton planName='Pro' userId={!!userId} className="w-full" />
                       ) : (
                         <Link
                           href='/dashboard'
@@ -254,7 +254,7 @@ const Page = async () => {
                           <ArrowRight className='ml-1.5 h-5 w-5' />
                         </Link>
                       ) : !subscriptionPlan.isSubscribed ? (
-                        <UpgradeButton planName='Military' userId={!!userId} />
+                        <UpgradeButton planName='Military' userId={!!userId} className="w-full" />
                       ) : subscriptionPlan.price?.priceIds.test ===
                         'price_1OL9nrGa4QqaSZrhI0PKu1FV' ? (
                         <Link
@@ -267,7 +267,7 @@ const Page = async () => {
                           <ArrowRight className='ml-1.5 h-5 w-5' />
                         </Link>
                       ) : (
-                        <UpgradeButton planName='Military' userId={!!userId} />
+                        <UpgradeButton planName='Military' userId={!!userId} className="w-full"/>
                       )
                     ) : (
                       <Link

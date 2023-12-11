@@ -57,7 +57,7 @@ export const appRouter = router({
       const { code } = input;
       const clientId = process.env.NEXT_PUBLIC_IDME_CLIENT_ID;
       const clientSecret = process.env.NEXT_PUBLIC_IDME_CLIENT_SECRET;
-      const redirectUri = 'https://summarai.io/idMeCallback?origin=pricing'; // Replace with your callback URL
+      const redirectUri = 'https://localhost:3000/idMeCallback?origin=pricing'; // Replace with your callback URL
 
       // const state = encodeURIComponent(
       //   JSON.stringify({ originUrl: window.location.pathname })
@@ -65,7 +65,7 @@ export const appRouter = router({
       const tokenUrl = 'https://api.id.me/oauth/token';
 
       try {
-        const response = await fetch(tokenUrl, {
+        const tokenResponse = await fetch(tokenUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -79,15 +79,41 @@ export const appRouter = router({
           }),
         });
 
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || 'Failed to exchange code for token');
+        const tokenData = await tokenResponse.json();
+        if (!tokenResponse.ok) {
+          throw new Error(
+            tokenData.error || 'Failed to exchange code for token'
+          );
         }
 
-        return data.access_token;
+        // Use the access token to request user information
+        const userInfoUrl = 'https://api.id.me/api/public/v3/attributes.json'; // Replace with the correct user info URL
+        const userInfoResponse = await fetch(userInfoUrl, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${tokenData.access_token}`,
+          },
+        });
+
+        const userInfo = await userInfoResponse.json();
+        if (!userInfoResponse.ok) {
+          throw new Error(
+            userInfo.error || 'Failed to retrieve user information'
+          );
+        }
+
+        // Extracting group and verified status
+        const userStatus = userInfo.status[0];
+        const group = userStatus.group;
+        const verified = userStatus.verified;
+        if (group !== 'military' || !verified) {
+          throw new Error('User is not a verified military member');
+        }
+
+        console.log('User is a verified military member');
+        return userInfo;
       } catch (error) {
-        console.error('Error exchanging code for token:', error);
+        console.error('Error:', error);
         throw error;
       }
     }),
@@ -343,6 +369,7 @@ export const appRouter = router({
           quantity: 1,
         },
       ],
+
       metadata: {
         userId: userId,
       },
@@ -391,6 +418,10 @@ export const appRouter = router({
           quantity: 1,
         },
       ],
+      subscription_data: {
+        trial_period_days: 725,
+      },
+      payment_method_collection: 'if_required',
       metadata: {
         userId: userId,
       },

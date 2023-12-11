@@ -12,14 +12,15 @@ import {
   CardTitle,
 } from './ui/card';
 import { Button } from './ui/button';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ArrowRight } from 'lucide-react';
 import { format } from 'date-fns';
-
+import UpgradeButton from './UpgradeButton';
 interface BillingFormProps {
   subscriptionPlan: Awaited<ReturnType<typeof getUserSubscriptionPlan>>;
+  userId: boolean;
 }
 
-const BillingForm = ({ subscriptionPlan }: BillingFormProps) => {
+const BillingForm = ({ subscriptionPlan, userId }: BillingFormProps) => {
   const { toast } = useToast();
 
   const { mutate: createStripeSession, isLoading } =
@@ -49,20 +50,35 @@ const BillingForm = ({ subscriptionPlan }: BillingFormProps) => {
           <CardHeader>
             <CardTitle>Subscription Plan</CardTitle>
             <CardDescription>
-              You are currently on the <strong>{subscriptionPlan.name}</strong>{' '}
+              You are currently on the{' '}
+              <strong>
+                {subscriptionPlan.name ? subscriptionPlan.name : 'Free'}
+              </strong>{' '}
               plan
             </CardDescription>
           </CardHeader>
           <CardFooter className='flex flex-col items-center space-y-2 md:flex-row md:justify-between md:space-x-0'>
-            <Button type='submit'>
-              {isLoading ? (
-                <Loader2 className='animate-spin mr-4 h-4 w-4' />
+            <div className='flex flex-col place-items-center md:flex-row space-x-2'>
+              <Button type='submit'>
+                {isLoading ? (
+                  <Loader2 className='animate-spin mr-4 h-4 w-4' />
+                ) : null}
+                {subscriptionPlan.isSubscribed
+                  ? 'Manage Subscription'
+                  : 'Upgrade to PRO'}
+                <ArrowRight className='h-5 w-5 ml-1.5' />
+              </Button>
+              {!subscriptionPlan.isSubscribed ? (
+                <>
+                  <p className='text-slate-600 font-medium'>or</p>
+                  <UpgradeButton
+                    planName='Military'
+                    userId={userId}
+                    className=' bg-teal-800'
+                  />
+                </>
               ) : null}
-              {subscriptionPlan.isSubscribed
-                ? 'Manage Subscription'
-                : 'Upgrade to PRO'}
-            </Button>
-
+            </div>
             {subscriptionPlan.isSubscribed ? (
               <p className='rounded-full text-xs font-medium'>
                 {subscriptionPlan.isCanceled
