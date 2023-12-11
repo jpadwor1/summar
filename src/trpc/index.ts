@@ -7,6 +7,10 @@ import { INFINITE_QUERY_LIMIT } from '@/config/infinite-query';
 import { absoluteUrl } from '@/lib/utils';
 import { getUserSubscriptionPlan, stripe } from '@/lib/stripe';
 import { PLANS } from '@/config/stripe';
+import { PDFLoader } from 'langchain/document_loaders/fs/pdf';
+import { pinecone } from '@/lib/pinecone';
+import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
+import { PineconeStore } from 'langchain/vectorstores/pinecone';
 
 export const appRouter = router({
   authCallback: publicProcedure.query(async () => {
@@ -119,12 +123,12 @@ export const appRouter = router({
       return file;
     }),
   getFile: privateProcedure
-    .input(z.object({ key: z.string() }))
+    .input(z.object({ downloadURL: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx;
       const file = await db.file.findFirst({
         where: {
-          key: input.key,
+          key: input.downloadURL,
           userId,
         },
       });
@@ -132,6 +136,109 @@ export const appRouter = router({
       if (!file) throw new TRPCError({ code: 'NOT_FOUND' });
 
       return file;
+    }),
+
+  getCreateFile: privateProcedure
+    .input(
+      z.object({
+        downloadURL: z.string(),
+        fileName: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+      const subscriptionPlan = await getUserSubscriptionPlan();
+      const doesFileExist = await db.file.findFirst({
+        where: {
+          key: input.downloadURL,
+        },
+      });
+
+      if (doesFileExist) return;
+
+      const createdFile = await db.file.create({
+        data: {
+          key: input.downloadURL,
+          name: input.fileName,
+          userId: userId,
+          url: input.downloadURL,
+          uploadStatus: 'PROCESSING',
+        },
+      });
+
+      if (!createdFile) throw new TRPCError({ code: 'NOT_FOUND' });
+
+      try {
+        const response = await fetch(input.downloadURL);
+        const blob = await response.blob();
+
+        const loader = new PDFLoader(blob);
+
+        const pageLevelDocs = await loader.load();
+
+        const taggedPageLevelDocs = pageLevelDocs.map((doc) => {
+          return {
+            ...doc,
+            metadata: {
+              userId: userId,
+              fileId: createdFile.id,
+            }, // Attaching user ID as metadata
+          };
+        });
+
+        const pagesAmount = pageLevelDocs.length;
+        const { isSubscribed } = subscriptionPlan;
+
+        const isProExceeded =
+          pagesAmount > PLANS.find((plan) => plan.name === 'Pro')!.pagesPerPdf;
+        const isFreeExceeded =
+          pagesAmount > PLANS.find((plan) => plan.name === 'Free')!.pagesPerPdf;
+        const isMilitaryExceeded =
+          pagesAmount >
+          PLANS.find((plan) => plan.name === 'Military')!.pagesPerPdf;
+
+        if (
+          (isSubscribed && isProExceeded) ||
+          (isSubscribed && isMilitaryExceeded) ||
+          (!isSubscribed && isFreeExceeded)
+        ) {
+          await db.file.update({
+            data: {
+              uploadStatus: 'FAILED',
+            },
+            where: {
+              id: createdFile.id,
+            },
+          });
+          return;
+        }
+
+        const pineconeIndex = pinecone.Index('summar');
+
+        const embeddings = new OpenAIEmbeddings({
+          openAIApiKey: process.env.OPENAI_API_KEY!,
+        });
+
+        await PineconeStore.fromDocuments(taggedPageLevelDocs, embeddings, {
+          pineconeIndex,
+        });
+
+        await db.file.update({
+          where: { id: createdFile.id },
+          data: {
+            uploadStatus: 'SUCCESS',
+          },
+        });
+      } catch (err) {
+        await db.file.update({
+          where: { id: createdFile.id },
+          data: {
+            uploadStatus: 'FAILED',
+          },
+        });
+      }
+
+      return createdFile;
     }),
 
   getFileUploadStatus: privateProcedure

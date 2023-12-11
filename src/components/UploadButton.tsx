@@ -3,28 +3,34 @@ import { useState } from 'react';
 import { Dialog, DialogContent, DialogTrigger } from './ui/dialog';
 import { Button } from './ui/button';
 import { Progress } from './ui/progress';
-import Dropzone, { useDropzone } from 'react-dropzone'
+import Dropzone, { useDropzone } from 'react-dropzone';
 import { Cloud, File, Loader2 } from 'lucide-react';
 import { useUploadThing } from '@/lib/useUploadThing';
 import { useToast } from './ui/use-toast';
 import { useRouter } from 'next/navigation';
 import { trpc } from '@/app/_trpc/client';
+import { startFileUpload } from '@/lib/actions';
 
 const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
   const router = useRouter();
+  const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
-  const { startUpload } = useUploadThing(
-    isSubscribed ? 'proPlanUploader' : 'freePlanUploader'
-  );
+  // const { startUpload } = useUploadThing(
+  //   isSubscribed ? 'proPlanUploader' : 'freePlanUploader'
+  // );
   const { toast } = useToast();
-  const { open } = useDropzone()
   const { mutate: startPolling } = trpc.getFile.useMutation({
     onSuccess: (file) => {
       router.push(`/dashboard/${file.id}`);
     },
     retry: true,
     retryDelay: 500,
+  });
+  const { mutate: createFile } = trpc.getCreateFile.useMutation({
+    onSuccess: (file) => {
+      router.push(`/dashboard/${file?.id}`);
+    },
   });
   const startSimulatedProgress = () => {
     setUploadProgress(0);
@@ -40,41 +46,50 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
     return interval;
   };
 
+  const { open, getRootProps, getInputProps } = useDropzone({
+    accept: { 'application/pdf': ['.pdf'] },
+    onDrop: (acceptedFiles: File[]) => {
+      // Only taking the first file, as multiple is set to false
+      setFile(acceptedFiles[0]);
+    },
+    multiple: false,
+    maxFiles: 1,
+  });
+
   return (
     <Dropzone
       multiple={false}
       noClick={true}
-      onDrop={async (acceptedFile) => {
+      onDrop={async (acceptedFiles: File[]) => {
         setIsUploading(true);
         const progressInterval = startSimulatedProgress();
 
-        // handle file uploading
-        const res = await startUpload(acceptedFile);
+        // Assuming only the first file is relevant
+        const selectedFile = acceptedFiles[0];
+        setFile(selectedFile);
 
-        if (!res) {
-          return toast({
+        const uploadResult = await startFileUpload({ file: selectedFile });
+        if (uploadResult) {
+          const { downloadURL } = uploadResult;
+          // Use the download URL as needed
+          clearInterval(progressInterval);
+          setUploadProgress(100);
+
+          createFile({ downloadURL, fileName: selectedFile.name });
+          // Call startPolling or any other subsequent action
+          startPolling({ downloadURL });
+
+          // Rest of your logic after successful upload
+        } else {
+          clearInterval(progressInterval);
+          setUploadProgress(0);
+          setIsUploading(false);
+          toast({
             title: 'Something went wrong',
             description: 'Please try again later',
             variant: 'destructive',
           });
         }
-
-        const [fileResponse] = res;
-
-        const key = fileResponse?.key;
-
-        if (!key) {
-          return toast({
-            title: 'Something went wrong',
-            description: 'Please try again later',
-            variant: 'destructive',
-          });
-        }
-
-        clearInterval(progressInterval);
-        setUploadProgress(100);
-
-        startPolling({ key });
       }}
     >
       {({ getRootProps, getInputProps, acceptedFiles }) => (
