@@ -18,10 +18,9 @@ const CookieConsentBanner = () => {
   const [showBanner, setShowBanner] = useState<boolean>(false);
   const [functionalCookies, setFunctionalCookies] = useState<boolean>(false);
   const [performanceCookies, setPerformanceCookies] = useState<boolean>(false);
-  const [animateBanner, setAnimateBanner] = useState("visible");
+  const [animateBanner, setAnimateBanner] = useState('visible');
 
   useEffect(() => {
-    cookie.remove('cookieConsent');
     const consentCookie = cookie.get('cookieConsent');
     if (consentCookie) {
       const preferences = JSON.parse(consentCookie);
@@ -48,7 +47,7 @@ const CookieConsentBanner = () => {
     };
     cookie.set('cookieConsent', JSON.stringify(preferences), { expires: 7 });
 
-    setAnimateBanner("exit");
+    setAnimateBanner('exit');
   };
 
   if (!showBanner) {
@@ -58,21 +57,21 @@ const CookieConsentBanner = () => {
   const variants = {
     hidden: { y: '100%', opacity: 0 },
     visible: { y: 0, opacity: 1 },
-    exit: { y: '100%', opacity: 1 } // Added exit variant
+    exit: { y: '100%', opacity: 1 }, // Added exit variant
   };
 
   return (
     <motion.div
-    initial="hidden"
-    animate={animateBanner}
-    exit="exit"
-    variants={variants}
-    transition={{ delay: 1, duration: 0.5 }}
-    onAnimationComplete={() => {
-      if (animateBanner === "exit") {
-        setShowBanner(false);
-      }
-    }}
+      initial='hidden'
+      animate={animateBanner}
+      exit='exit'
+      variants={variants}
+      transition={{ delay: 1, duration: 0.5 }}
+      onAnimationComplete={() => {
+        if (animateBanner === 'exit') {
+          setShowBanner(false);
+        }
+      }}
       className='fixed bottom-0 left-0 z-50 max-w-[400px]'
     >
       <Card>
