@@ -67,7 +67,7 @@ const CookieConsentBanner = () => {
     animate={animateBanner}
     exit="exit"
     variants={variants}
-    transition={{ duration: 0.5 }}
+    transition={{ delay: 1, duration: 0.5 }}
     onAnimationComplete={() => {
       if (animateBanner === "exit") {
         setShowBanner(false);
