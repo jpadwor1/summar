@@ -15,6 +15,7 @@ import { Button } from './ui/button';
 import { Loader2, ArrowRight } from 'lucide-react';
 import { format } from 'date-fns';
 import UpgradeButton from './UpgradeButton';
+
 interface BillingFormProps {
   subscriptionPlan: Awaited<ReturnType<typeof getUserSubscriptionPlan>>;
   userId: boolean;
@@ -74,7 +75,7 @@ const BillingForm = ({ subscriptionPlan, userId }: BillingFormProps) => {
                   <UpgradeButton
                     planName='Military'
                     userId={userId}
-                    className=' bg-teal-800'
+                    className=' bg-teal-600'
                   />
                 </>
               ) : null}

@@ -57,7 +57,7 @@ export const appRouter = router({
       const { code } = input;
       const clientId = process.env.NEXT_PUBLIC_IDME_CLIENT_ID;
       const clientSecret = process.env.NEXT_PUBLIC_IDME_CLIENT_SECRET;
-      const redirectUri = 'https://localhost:3000/idMeCallback?origin=pricing'; // Replace with your callback URL
+      const redirectUri = 'https://summarai.io/idMeCallback?origin=pricing'; // Replace with your callback URL
       const errorCodes: { [key: string]: string } = {
         access_denied:
           'You have denied the consent to release data to the partner. Please verify again.',

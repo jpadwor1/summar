@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/button';
 import Image from 'next/image';
 import { RegisterLink } from '@kinde-oss/kinde-auth-nextjs/server';
+import CookieConsentBanner from '@/components/CookieConsent';
 
 export default function Home() {
   return (
@@ -155,6 +156,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <CookieConsentBanner />
     </>
   );
 }
