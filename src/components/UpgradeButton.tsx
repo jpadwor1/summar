@@ -21,9 +21,6 @@ const UpgradeButton = ({ planName, userId, className }: UpgradeButtonProps) => {
     const clientId = process.env.NEXT_PUBLIC_IDME_CLIENT_ID;
     const redirectUri = 'https://localhost:3000/idMeCallback?origin=pricing'; // Replace with your callback URL
     const scope = 'military';
-    const state = encodeURIComponent(
-      JSON.stringify({ originUrl: window.location.pathname })
-    );
     const authUrl = `https://api.id.me/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}`;
     window.location.href = authUrl;
   };

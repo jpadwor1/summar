@@ -58,10 +58,21 @@ export const appRouter = router({
       const clientId = process.env.NEXT_PUBLIC_IDME_CLIENT_ID;
       const clientSecret = process.env.NEXT_PUBLIC_IDME_CLIENT_SECRET;
       const redirectUri = 'https://localhost:3000/idMeCallback?origin=pricing'; // Replace with your callback URL
+      const errorCodes: { [key: string]: string } = {
+        access_denied:
+          'You have denied the consent to release data to the partner. Please verify again.',
+        invalid_request:
+          'The owner of this application is missing a required parameter or it is malformed',
+        invalid_client:
+          'The owner of this application is using an incorrect Client ID',
+        invalid_redirect_uri:
+          'The owner of this application has an incorrect Redirect URI. Please check the values match',
+        unsupported_response_type:
+          'The owner of this application has an unsupported response type. Please check the parameters',
+        invalid_scope:
+          'The owner of this application has an invalid scope. Please check your policies are enabled and the scope has been updated.',
+      };
 
-      // const state = encodeURIComponent(
-      //   JSON.stringify({ originUrl: window.location.pathname })
-      // );
       const tokenUrl = 'https://api.id.me/oauth/token';
 
       try {
@@ -110,13 +121,24 @@ export const appRouter = router({
           throw new Error('User is not a verified military member');
         }
 
-        console.log('User is a verified military member');
-        return userInfo;
+        return { userInfo, tokenData };
       } catch (error) {
-        console.error('Error:', error);
-        throw error;
+        let errorMessage = 'An unknown error occurred';
+        if (error instanceof Error) {
+          const errorCode = error.message;
+
+          // Check if the error code exists in the errorCodes object
+          if (errorCode in errorCodes) {
+            errorMessage = errorCodes[errorCode];
+          } else {
+            // Log the original error message for debugging purposes
+            console.error(errorCode);
+          }
+        }
+        throw new Error(errorMessage);
       }
     }),
+
   getUserFiles: privateProcedure.query(async ({ ctx }) => {
     const { userId, user } = ctx;
 
@@ -148,6 +170,7 @@ export const appRouter = router({
 
       return file;
     }),
+
   getFile: privateProcedure
     .input(z.object({ downloadURL: z.string() }))
     .mutation(async ({ ctx, input }) => {
@@ -419,7 +442,7 @@ export const appRouter = router({
         },
       ],
       subscription_data: {
-        trial_period_days: 725,
+        trial_period_days: 730,
       },
       payment_method_collection: 'if_required',
       metadata: {
