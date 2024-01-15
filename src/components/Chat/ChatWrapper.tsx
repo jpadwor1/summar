@@ -9,7 +9,6 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { ChatContextProvider } from './ChatContext';
 import { getUserSubscriptionPlan } from '@/lib/stripe';
 import { PLANS } from '@/config/stripe';
-import { redirect } from 'next/navigation';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 interface ChatWrapperProps {
@@ -93,12 +92,14 @@ const ChatWrapper = ({ fileId, subscriptionPlan }: ChatWrapperProps) => {
             <p className='text-zinc-500 text-sm'>
               Your{' '}
               <span className='font-medium'>
-                {subscriptionPlan.name === 'Pro' ? 'Pro' : 'Free'}
+                {subscriptionPlan.name}
               </span>{' '}
               plan supports up to{' '}
+              
               {subscriptionPlan.name === 'Pro'
                 ? ProPagesAmount
-                : freePagesAmount}{' '}
+                : subscriptionPlan.name === 'Military' ? militaryPagesAmount
+              : freePagesAmount}{' '}
               pages per PDF.
             </p>
 

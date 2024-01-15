@@ -96,7 +96,6 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
         <div
           {...getRootProps()}
           className='border h-64 m-4 border-dashed border-gray-300 rounded-lg'
-          onClick={open}
         >
           <div className='flex items-center justify-center w-full h-full'>
             <label

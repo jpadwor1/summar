@@ -247,8 +247,8 @@ export const appRouter = router({
           PLANS.find((plan) => plan.name === 'Military')!.pagesPerPdf;
 
         if (
-          (isSubscribed && isProExceeded) ||
-          (isSubscribed && isMilitaryExceeded) ||
+          (subscriptionPlan.name === 'Pro' && isProExceeded) ||
+          (subscriptionPlan.name === 'Military' && isMilitaryExceeded) ||
           (!isSubscribed && isFreeExceeded)
         ) {
           await db.file.update({
